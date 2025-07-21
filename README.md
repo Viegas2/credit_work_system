@@ -1,4 +1,5 @@
-#Credit Score Case — Análise e Modelagem de Risco de Crédito
+Credit Score Case — Análise e Modelagem de Risco de Crédito
+
 Este projeto foi desenvolvido como resposta a um estudo de caso envolvendo análise de dados e modelagem preditiva de risco de crédito. O objetivo principal é avaliar a base de dados, construir uma variável alvo representando o comportamento de pagamento dos clientes e testar a viabilidade de prever esse comportamento por meio de um modelo supervisionado.
 
 1. Análise Descritiva da Base
