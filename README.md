@@ -1,86 +1,82 @@
-# 🧠 Credit Score Case – Análise e Modelagem Preditiva
+#Credit Score Case — Análise e Modelagem de Risco de Crédito
+Este projeto foi desenvolvido como resposta a um estudo de caso envolvendo análise de dados e modelagem preditiva de risco de crédito. O objetivo principal é avaliar a base de dados, construir uma variável alvo representando o comportamento de pagamento dos clientes e testar a viabilidade de prever esse comportamento por meio de um modelo supervisionado.
 
-Este projeto foi desenvolvido com o objetivo de responder a um case prático sobre análise de dados e modelagem preditiva para risco de crédito. O foco é avaliar a qualidade da base de dados, construir uma variável alvo (`Target`) representando o comportamento de pagamento dos clientes, e analisar a viabilidade de prever esse comportamento com um modelo supervisionado.
+1. Análise Descritiva da Base
+A base original conta com 50 mil registros e 27 colunas. As variáveis se distribuem da seguinte forma:
 
----
+19 variáveis categóricas (tipo object)
 
-## ❓ Perguntas do Case
+4 variáveis numéricas inteiras
 
-1. **Faça uma análise descritiva da base de dados.**
+4 variáveis numéricas contínuas (float)
 
-2. **Construa uma variável target, que classifique o cliente de forma binária como "bom" ou "mau" pagador. Considere as seguintes variáveis para construção do seu target:**
-   - `Delay_from_due_date`
-   - `Num_of_Delayed_Payment`
-   - ➤ Justifique a lógica adotada.
+Principais problemas encontrados:
+Valores extremos fora da realidade (por exemplo, idades superiores a 8000 anos e saldos mensais bilionários)
 
-3. **A partir da variável target construída, seria possível construir um modelo para predizer este target considerando as demais variáveis do dataset?**
-   - ➤ Explique se seria possível e justifique seu raciocínio.
+Presença de valores nulos em colunas importantes, como Monthly_Inhand_Salary e Credit_History_Age
 
----
+Inconsistências de formatação e escalas
 
-## 📊 1. Análise Descritiva
+Distribuições assimétricas nas variáveis numéricas
 
-A base de dados inicial contém:
+Após o tratamento:
+Redução da base para 46.095 registros válidos
 
-- **50.000 registros**
-- **27 colunas**, sendo:
-  - 19 categóricas (`object`)
-  - 4 numéricas inteiras
-  - 4 numéricas contínuas (float)
+Remoção de outliers extremos
 
-### Principais problemas identificados:
-- Outliers severos (ex: idades > 8000 anos, saldos mensais bilionários)
-- Valores nulos em colunas relevantes (`Monthly_Inhand_Salary`, `Credit_History_Age`, etc.)
-- Inconsistências de formatação em colunas numéricas
-- Distribuições distorcidas e assimétricas
+Normalização e padronização de variáveis numéricas
 
-### Após tratamento:
-- Redução para **46.095 registros válidos**
-- Limpeza de outliers
-- Normalização de variáveis numéricas
-- Conversão de colunas para tipos apropriados
+Ajustes de tipo e limpeza de dados categóricos
 
----
+2. Construção da Variável Alvo (Target)
+A variável Target foi construída para classificar os clientes em dois grupos: bons e maus pagadores. Para isso, foram considerados dois critérios principais:
 
-## 🎯 2. Construção da Variável Target
+Atrasos significativos no pagamento: Delay_from_due_date > 15 dias
 
-A variável `Target` foi construída com base em dois critérios de risco de crédito:
+Frequência de atrasos: Num_of_Delayed_Payment > 5
 
-- **Atraso elevado:** `Delay_from_due_date > 15 dias`
-- **Frequência de atraso:** `Num_of_Delayed_Payment > 5`
+Regras adotadas:
+Clientes que atendem a pelo menos um desses critérios foram classificados como maus pagadores (1)
 
-### Regras:
-- Se o cliente **atendeu a qualquer um desses critérios**, ele foi classificado como **"mau pagador" (1)**.
-- Caso contrário, foi classificado como **"bom pagador" (0)**.
+Clientes que não atendem a nenhum dos dois critérios foram classificados como bons pagadores (0)
 
-### Justificativa:
-Esses critérios refletem **comportamento financeiro repetido e relevante**, indo além de atrasos pontuais. São amplamente utilizados em análises de crédito para definir perfis de risco.
+Justificativa:
+Os critérios escolhidos refletem comportamentos consistentes de inadimplência e são comumente utilizados em análises de risco de crédito. Buscou-se ir além de atrasos pontuais, focando em padrões relevantes de comportamento financeiro.
 
-### Distribuição:
-- **Mau pagador**: 89,46%
-- **Bom pagador**: 10,54%
+Distribuição da variável:
+Maus pagadores: 89,46%
 
-> A alta concentração de maus pagadores se justifica pelos próprios critérios adotados, alinhados com a distribuição real dos dados (mediana e quartis de atraso e inadimplência estão acima dos limites definidos).
+Bons pagadores: 10,54%
 
----
+A concentração maior de maus pagadores está de acordo com a própria distribuição dos dados, que já indicava tendência elevada de inadimplência com base na mediana e nos quartis das variáveis relacionadas.
 
-## 🔍 3. É possível construir um modelo preditivo?
+3. Viabilidade de um Modelo Preditivo
+Sim, é possível construir um modelo de machine learning para prever a variável Target, desde que algumas precauções sejam seguidas:
 
-Sim, é possível — **desde que algumas condições sejam respeitadas**:
+Aspectos considerados:
+Todas as variáveis utilizadas como preditoras estão disponíveis antes do evento de inadimplência, evitando vazamento de dados.
 
-### ✅ Requisitos atendidos:
-- As variáveis utilizadas na modelagem são **anteriores ao evento de inadimplência**.
-- Foi evitado **data leakage** (ex: `Delay_from_due_date` não foi usada, já que é usada para construir o target).
-- Variáveis categóricas foram tratadas adequadamente.
-- Foi feita seleção de variáveis relevantes e exclusão de colunas com viés direto.
+A variável Delay_from_due_date, por ser usada na construção do target, não foi usada como preditora no modelo.
 
-### 🔧 Modelo Utilizado:
-- **Random Forest Classifier**
-- Métricas de avaliação: Acurácia, Curva ROC e **Índice KS (Kolmogorov-Smirnov)**
+Variáveis categóricas foram tratadas com codificação adequada (ex: one-hot encoding ou label encoding).
 
-### Resultados:
-- O modelo apresentou **boa capacidade discriminatória**, com índice KS considerado alto.
-- A visualização de árvores de decisão foi usada para interpretar os critérios de classificação.
-- A desbalanceamento da base foi levado em consideração na avaliação.
+Foi feita uma seleção criteriosa de variáveis, excluindo colunas com risco de viés direto.
 
----
+Modelo utilizado:
+Random Forest Classifier
+
+Métricas de avaliação:
+Acurácia
+
+Matriz de confusão
+
+Curva ROC
+
+Índice KS (Kolmogorov-Smirnov), que indicou boa capacidade discriminatória do modelo
+
+Observações finais:
+O desbalanceamento da base foi considerado durante a modelagem e avaliação.
+
+O modelo conseguiu identificar padrões relevantes com bom desempenho, mesmo diante do desequilíbrio da variável alvo.
+
+A visualização das árvores de decisão contribuiu para a interpretação dos principais critérios utilizados pelo modelo.
